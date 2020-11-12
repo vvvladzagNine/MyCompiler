@@ -1,6 +1,7 @@
 fun main(){
     val rules = FileParcer.read("files/file2.txt")
     val tableConstructor = TableConstructor(rules)
+    print(tableConstructor.terminals)
     tableConstructor.constructFIRST()
     tableConstructor.printFIRST()
     tableConstructor.FOLLOW = mutableMapOf(
