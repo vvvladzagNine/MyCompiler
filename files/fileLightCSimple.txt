@@ -1,0 +1,17 @@
+E>Tm(){S}
+T>t|b|v
+S>|D;|{S}|FS|QS|J
+D>TIA
+I>CZ
+C>a|c|d|e|g|h|j|k|l|n|o|p|q|s|u|w|x|y|z|_
+Z>|CZ
+A>|=X
+X>I|N
+N>HM
+H>0|1|2|3|4|5|6|7|8|9
+M>|HM
+F>f(D;B;)
+B>IRI|NRI
+R><|>|@|!
+Q>i(B)
+J>rN;

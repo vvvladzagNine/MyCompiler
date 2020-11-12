@@ -6,7 +6,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
     var FOLLOW = mutableMapOf<String,Set<String>>()
     val rules: Map<String, List<String>>
     val table = mutableMapOf<Pair<String,String>, Pair<String, String>>()
-    val terminals: Set<Char>
+    val terminals: Set<String>
 
     private val magazineAvailableSymbols = "QWERTYUIOPASDFGHJKLZXCVBNM"
 
@@ -17,6 +17,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
             flatten().
             flatMap{it.toCharArray().toList()}.
             filter{!magazineAvailableSymbols.contains(it)}.
+            map{it.toString()}.
             toSet()
     }
 
@@ -45,7 +46,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
                 val new = result union FIRST(t.toString())
                 result = new.toMutableSet()
 
-                val derives = magazineAvailableSymbols.contains(t) && rules[t.toString()]!!.contains("ε")
+                val derives = magazineAvailableSymbols.contains(t.toString()) && rules[t.toString()]!!.contains("$")
                 if (!derives) break
             }
             return result
@@ -111,6 +112,14 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
     fun printTable() {
         println("\n\n...TABLE...")
         for(f in table){
+            println(f)
+        }
+        println("============")
+    }
+
+    fun printRules() {
+        println("\n\n...RULES...")
+        for(f in rules){
             println(f)
         }
         println("============")
