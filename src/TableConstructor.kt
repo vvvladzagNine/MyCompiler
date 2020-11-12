@@ -4,13 +4,21 @@ import java.lang.RuntimeException
 class TableConstructor(replacings: Set<MagazineReplacing>) {
     var FIRST = mutableMapOf<String,Set<String>>()
     var FOLLOW = mutableMapOf<String,Set<String>>()
-    var rules: Map<String, List<String>>
+    val rules: Map<String, List<String>>
     val table = mutableMapOf<Pair<String,String>, Pair<String, String>>()
+    val terminals: Set<String>
 
     private val magazineAvailableSymbols = "QWERTYUIOPASDFGHJKLZXCVBNM"
 
     init {
         rules = replacings.associateBy({ it.read }, { it.write })
+        terminals = rules.
+            values.
+            flatten().
+            flatMap{it.toCharArray().toList()}.
+            filter{!magazineAvailableSymbols.contains(it)}.
+            map{it.toString()}.
+            toSet()
     }
 
     fun FIRST(token: String): Set<String> {
@@ -38,7 +46,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
                 val new = result union FIRST(t.toString())
                 result = new.toMutableSet()
 
-                val derives = magazineAvailableSymbols.contains(t) && rules[t.toString()]!!.contains("ε")
+                val derives = magazineAvailableSymbols.contains(t.toString()) && rules[t.toString()]!!.contains("$")
                 if (!derives) break
             }
             return result
@@ -74,6 +82,13 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
                     table[Pair(entry.key,end)] = Pair("Synch","Synch")
             }
         }
+        for(nonT in rules.keys) {
+            for (terminal in terminals) {
+                if(table[Pair(nonT,terminal.toString())] == null) {
+                    table[Pair(nonT, terminal.toString())] = Pair("NotSynch","NotSynch")
+                }
+            }
+        }
     }
 
 
@@ -97,6 +112,14 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
     fun printTable() {
         println("\n\n...TABLE...")
         for(f in table){
+            println(f)
+        }
+        println("============")
+    }
+
+    fun printRules() {
+        println("\n\n...RULES...")
+        for(f in rules){
             println(f)
         }
         println("============")
