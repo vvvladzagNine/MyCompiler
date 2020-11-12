@@ -1,22 +1,24 @@
 fun main(){
-    val rules = FileParcer.read("files/file2.txt")
-    val tableConstructor = TableConstructor(rules)
+    val rules = FileParcer.read("files/file4.txt")
+    val firstItem = FileParcer.getFirstItem("files/file4.txt")
+    val tableConstructor = TableConstructor(rules, firstItem)
     tableConstructor.printRules()
     println("\n\n")
     println(tableConstructor.terminals)
 
     tableConstructor.constructFIRST()
     tableConstructor.printFIRST()
-    tableConstructor.FOLLOW = mutableMapOf(
-        "E" to setOf(")","$"),
-        "A" to setOf(")","$"),
-        "T" to setOf(")","$","+"),
-        "B" to setOf(")","$","+"),
-        "F" to setOf(")","$","+","*")
-
-    )
-    tableConstructor.constructTable()
-    tableConstructor.printTable()
-    val anal = Analizator(tableConstructor.table)
-    anal.go()
+    tableConstructor.constructFollow();
+    println(tableConstructor.FOLLOW)
+//    tableConstructor.FOLLOW = mutableMapOf(
+//        "E" to mutableSetOf(")","$"),
+//        "A" to mutableSetOf(")","$"),
+//        "T" to mutableSetOf(")","$","+"),
+//        "B" to mutableSetOf(")","$","+"),
+//        "F" to mutableSetOf(")","$","+","*")
+//    )
+//    tableConstructor.constructTable()
+//    tableConstructor.printTable()
+//    val anal = Analizator(tableConstructor.table)
+//    anal.go()
 }

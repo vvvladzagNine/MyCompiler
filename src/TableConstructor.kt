@@ -1,11 +1,14 @@
 import java.lang.Exception
 import java.lang.RuntimeException
 
-class TableConstructor(replacings: Set<MagazineReplacing>) {
+class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
     var FIRST = mutableMapOf<String,Set<String>>()
-    var FOLLOW = mutableMapOf<String,Set<String>>()
+    var FOLLOW = mutableMapOf<String,MutableSet<String>>()
     val rules: Map<String, List<String>>
     val table = mutableMapOf<Pair<String,String>, Pair<String, String>>()
+    val firstItem: String
+    var currentFollowUpRule = "null";
+    var isStartTaken = false
     val terminals: Set<String>
 
     private val magazineAvailableSymbols = "QWERTYUIOPASDFGHJKLZXCVBNM"
@@ -19,6 +22,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
             filter{!magazineAvailableSymbols.contains(it)}.
             map{it.toString()}.
             toSet()
+        this.firstItem = firstItem
     }
 
     fun FIRST(token: String): Set<String> {
@@ -46,11 +50,141 @@ class TableConstructor(replacings: Set<MagazineReplacing>) {
                 val new = result union FIRST(t.toString())
                 result = new.toMutableSet()
 
-                val derives = magazineAvailableSymbols.contains(t.toString()) && rules[t.toString()]!!.contains("$")
+                val derives = magazineAvailableSymbols.contains(t) && rules[t.toString()]!!.contains("$")
                 if (!derives) break
             }
             return result
         }
+    }
+
+    //region depricated follow
+    fun follow(rule: String) : MutableSet<String> {
+        var rulesSet = getFollowUps(rule)
+        var result = mutableSetOf<String>()
+        if (rule.equals(firstItem)) {
+            result.add("$")
+        }
+        if (!magazineAvailableSymbols.contains(rule)) {
+            result.add(rule)
+            return result
+        }
+        if (!rule.isEmpty()) {
+            rulesSet.forEach { pair ->
+                var firItem = getNextFollowUp(rule, pair)
+                if (firItem.isEmpty()) {
+
+                } else if (!magazineAvailableSymbols.contains(firItem)) {
+                    result.add(firItem)
+                } else {
+                    var new = setOf<String>()
+                    if (isStartTaken) {
+                        new = result union follow(firItem)
+                    } else {
+                        if (FIRST[firItem]!!.contains("$")) {
+                            var newnew = FIRST[firItem]!!.toMutableSet()
+                            newnew.remove("$")
+                            var nextItem = getNextFollowUp(firItem, pair)
+                            new = newnew union follow(getNextFollowUp(firItem, pair))
+                        } else {
+                            new = result union FIRST[firItem]!!.toMutableSet()
+                        }
+                    }
+                    var newnew = result union new
+                    result = newnew.toMutableSet()
+                }
+            }
+        }
+        return result
+
+    }
+    //endregion
+
+    fun followWithInner(rule: String) : MutableSet<String> {
+        var rulesSet = getFollowUps(rule)
+        var result = mutableSetOf<String>()
+        if (rule.equals(firstItem)) {
+            result.add("$")
+        }
+        if (!magazineAvailableSymbols.contains(rule)) {
+            result.add(rule)
+            return result
+        }
+        if (!rule.isEmpty()) {
+            rulesSet.forEach { pair ->
+                var new = result union followInner(getNextFollowUp(rule, pair), pair, result)
+                result =  new.toMutableSet()
+            }
+        }
+        return result
+
+    }
+
+    fun followInner(rule: String, pair: Pair<String, String>, result: MutableSet<String>): MutableSet<String> {
+        var innerResult = result;
+        var firItem = rule
+        if (firItem.isEmpty()) {
+
+        } else if (!magazineAvailableSymbols.contains(firItem)) {
+            innerResult.add(firItem)
+        } else {
+            var new = setOf<String>()
+            if (isStartTaken) {
+                new = innerResult union followWithInner(firItem)
+            } else {
+                if (FIRST[firItem]!!.contains("$")) {
+                    var newnew = FIRST[firItem]!!.toMutableSet()
+                    newnew.remove("$")
+                    new = newnew union followInner(getNextFollowUp(firItem, pair), pair, innerResult)
+                } else {
+                    new = innerResult union FIRST[firItem]!!.toMutableSet()
+                }
+            }
+            var newnew = innerResult union new
+            innerResult = newnew.toMutableSet()
+        }
+        return innerResult
+    }
+
+
+
+
+    fun constructFollow() {
+        rules.forEach{
+                FOLLOW.put(it.key, mutableSetOf())
+        }
+
+        rules.forEach{k,v ->
+            currentFollowUpRule = k
+            FOLLOW[k] = followWithInner(k)
+        }
+    }
+
+    /**
+     * Функция выводит рулы, где item находится в end
+     */
+    fun getFollowUps(item: String): MutableSet<Pair<String, String>> {
+        val result = mutableSetOf<Pair<String, String>>()
+        rules.forEach{ k,v ->
+            v.forEach() {
+                if (it.contains(item)) {
+                    result.add(Pair(k, it))
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * Находит следующий элемент в end секции правила
+     */
+    fun getNextFollowUp(item: String, pair: Pair<String, String> ): String {
+        isStartTaken = false
+        if (pair.second.indexOf(item).equals(pair.second.lastIndex)) {
+            isStartTaken = true
+            return if (!pair.first.equals(currentFollowUpRule) && !pair.first.equals(pair.second.last().toString())) pair.first else ""
+        }
+        var result = pair.second.toCharArray()[pair.second.indexOf(item) + 1].toString()
+        return result
     }
 
     fun constructTable() {

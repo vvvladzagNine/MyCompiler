@@ -15,4 +15,8 @@ object FileParcer {
         val writed = string.substringAfter(">").split("|")
         return MagazineReplacing(readed,writed)
     }
+
+    fun getFirstItem(path: String): String {
+        return File(path).readLines()[0].substringBefore(">")
+    }
 }

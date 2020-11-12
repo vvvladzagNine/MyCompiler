@@ -1,5 +1,5 @@
 E>TI
-I>+TI|ε
+I>+TI|$
 T>FD
-D>xFD|ε
+D>xFD|$
 F>n|(E)
