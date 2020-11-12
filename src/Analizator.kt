@@ -8,8 +8,8 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
     var output = Pair<String, String>("","")
 
     fun go(){
-        //input= mutableListOf("i","+","i","*","i","$")
-        input= mutableListOf(")","i","+","*","i","$")
+        input= mutableListOf("i","+","i","*","i","$")
+        //input= mutableListOf(")","i","+","*","i","$")
         stack.push("$")
         stack.push("E")
 
@@ -24,6 +24,7 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
             output = table[Pair(poped,tokenFromInput)]!!
 
             var error = false
+            var errorUntilEnd = false
 
             if(output.first=="Synch" || output.first=="NotSynch") {
                 println("Error symbol $tokenFromInput")
@@ -34,6 +35,7 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
                     if(output.first=="Synch") {
                         println("synchronising symbol $tokenFromInput")
                         println("  \\/")
+                        if(tokenFromInput=="$") errorUntilEnd = true
                         break
                     }
                     println("skip symbol $tokenFromInput")
@@ -44,7 +46,8 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
 
             }
 
-            if(error) continue
+            if (errorUntilEnd) break
+            if (error) continue
 
             val reversed =output.second.reversed().trim().split("")
             for(token in reversed){
@@ -60,6 +63,7 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
             println("output $output")
             println("  \\/")
         }
+        println("__END__")
     }
 
 }
