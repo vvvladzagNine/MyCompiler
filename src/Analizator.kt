@@ -15,11 +15,11 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
             println("input $input")
             val poped = stack.pop()
             val tokenFromInput = input.first()
-            if(poped=="$" && tokenFromInput=="$") break;
+            if(poped=="$" && tokenFromInput=="$") break
             output = table[Pair(poped,tokenFromInput)]!!
-            val reversed =output.second.reversed().split("")
+            val reversed =output.second.reversed().trim().split("")
             for(token in reversed){
-                if(token != "$")
+                if(token != "$" && token !=" " && token !="")
                     stack.push(token)
             }
         }
