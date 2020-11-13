@@ -7,7 +7,7 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
     val rules: Map<String, List<String>>
     val table = mutableMapOf<Pair<String,String>, Pair<String, String>>()
     val firstItem: String
-    var currentFollowUpRule = "null";
+    var currentFollowUpRule = "null"
     var isStartTaken = false
     val terminals: Set<String>
 
@@ -57,48 +57,6 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
         }
     }
 
-    //region depricated follow
-    fun follow(rule: String) : MutableSet<String> {
-        var rulesSet = getFollowUps(rule)
-        var result = mutableSetOf<String>()
-        if (rule.equals(firstItem)) {
-            result.add("$")
-        }
-        if (!magazineAvailableSymbols.contains(rule)) {
-            result.add(rule)
-            return result
-        }
-        if (!rule.isEmpty()) {
-            rulesSet.forEach { pair ->
-                var firItem = getNextFollowUp(rule, pair)
-                if (firItem.isEmpty()) {
-
-                } else if (!magazineAvailableSymbols.contains(firItem)) {
-                    result.add(firItem)
-                } else {
-                    var new = setOf<String>()
-                    if (isStartTaken) {
-                        new = result union follow(firItem)
-                    } else {
-                        if (FIRST[firItem]!!.contains("$")) {
-                            var newnew = FIRST[firItem]!!.toMutableSet()
-                            newnew.remove("$")
-                            var nextItem = getNextFollowUp(firItem, pair)
-                            new = newnew union follow(getNextFollowUp(firItem, pair))
-                        } else {
-                            new = result union FIRST[firItem]!!.toMutableSet()
-                        }
-                    }
-                    var newnew = result union new
-                    result = newnew.toMutableSet()
-                }
-            }
-        }
-        return result
-
-    }
-    //endregion
-
     fun followWithInner(rule: String) : MutableSet<String> {
         var rulesSet = getFollowUps(rule)
         var result = mutableSetOf<String>()
@@ -116,11 +74,10 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
             }
         }
         return result
-
     }
 
     fun followInner(rule: String, pair: Pair<String, String>, result: MutableSet<String>): MutableSet<String> {
-        var innerResult = result;
+        var innerResult = result
         var firItem = rule
         if (firItem.isEmpty()) {
 
@@ -145,14 +102,10 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
         return innerResult
     }
 
-
-
-
-    fun constructFollow() {
+    private fun constructFollow() {
         rules.forEach{
                 FOLLOW.put(it.key, mutableSetOf())
         }
-
         rules.forEach{k,v ->
             currentFollowUpRule = k
             FOLLOW[k] = followWithInner(k)
@@ -220,20 +173,18 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
         }
         for(nonT in rules.keys) {
             for (terminal in terminals) {
-                if(table[Pair(nonT,terminal.toString())] == null) {
-                    table[Pair(nonT, terminal.toString())] = Pair("NotSynch","NotSynch")
+                if(table[Pair(nonT,terminal)] == null) {
+                    table[Pair(nonT, terminal)] = Pair("NotSynch","NotSynch")
                 }
             }
         }
     }
 
-
-    fun constructFIRST() {
+    private fun constructFIRST() {
         for(NonT in rules.keys){
             FIRST[NonT] = mutableSetOf()
             val new = FIRST[NonT]!! union FIRST(NonT)
             FIRST[NonT] = new.toMutableSet()
-
         }
     }
 

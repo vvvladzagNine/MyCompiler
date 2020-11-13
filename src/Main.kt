@@ -1,9 +1,10 @@
 fun main(){
-    val rules = FileParcer.read("files/file2.txt")
-    val firstItem = FileParcer.getFirstItem("files/file2.txt")
+//    val path = "files/fileLightCSimple.txt"
+    val path = "files/file2.txt"
+    val rules = FileParcer.read(path)
+    val firstItem = FileParcer.getFirstItem(path)
     val tableConstructor = TableConstructor(rules, firstItem)
     tableConstructor.printRules()
-    println("\n\n")
     tableConstructor.constructTable()
 
     tableConstructor.printFIRST()
@@ -13,6 +14,6 @@ fun main(){
     tableConstructor.printTable()
 
     val analizator = Analizator(tableConstructor.table)
-    //"i","+","i","*","i","$"
     analizator.go(")i+i+*i$")
+//    analizator.go("tm(){to=5}")
 }

@@ -17,8 +17,8 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
         println("stack $stack")
         println("input $input")
         println("  \\/")
-        while(true) {
 
+        while(true) {
             val poped = stack.pop()
             var tokenFromInput = input.first()
             if(poped=="$" && tokenFromInput=="$") break
@@ -44,7 +44,6 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
                     output = table[Pair(poped,tokenFromInput)]!!
                     continue
                 }
-
             }
 
             if (errorUntilEnd) break
