@@ -188,6 +188,8 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
     }
 
     fun constructTable() {
+        constructFIRST()
+        constructFollow()
         for(NonT in rules.keys) {
             for(end in rules[NonT]!!) {
                 val first = FIRST(end)
@@ -238,6 +240,14 @@ class TableConstructor(replacings: Set<MagazineReplacing>,firstItem: String) {
     fun printFIRST() {
         println("\n\n...FIRST...")
         for(f in FIRST){
+            println(f)
+        }
+        println("============")
+    }
+
+    fun printFOLLOW() {
+        println("\n\n...FOLLOW...")
+        for(f in FOLLOW){
             println(f)
         }
         println("============")

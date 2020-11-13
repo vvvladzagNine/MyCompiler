@@ -7,8 +7,9 @@ class Analizator(val table: Map<Pair<String, String>, Pair<String, String>>) {
     var stack = Stack<String>()
     var output = Pair<String, String>("","")
 
-    fun go(){
-        input= mutableListOf("i","+","i","*","i","$")
+    fun go(inputStrng: String){
+        input = inputStrng.toCharArray().map {it.toString()}.toMutableList()
+        //input= mutableListOf("i","+","i","*","i","$")
         //input= mutableListOf(")","i","+","*","i","$")
         stack.push("$")
         stack.push("E")
